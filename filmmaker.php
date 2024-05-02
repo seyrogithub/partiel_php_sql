@@ -1,5 +1,9 @@
 <?php
-$servername = "localhost"; // Nom du serveur
+ // Afficher les erreurs à l'écran
+ ini_set('display_errors', 1);
+ // Afficher les erreurs et les avertissements
+ error_reporting(E_ALL);
+ $servername = "localhost"; // Nom du serveur
 $username = "root"; // Nom d'utilisateur de la base de données
 $password = "root"; // Mot de passe de la base de données
 $dbname = "partiel_web"; // Nom de la base de données
@@ -13,21 +17,21 @@ try {
     echo "La connexion a échouée : " . $e->getMessage();
 }
 
-echo "<h2> Liste des meilleurs films des années 2010 : </h2>";
-
 $resultat = $dbPDO->prepare("
-SELECT YEAR(date_de_sortie) AS date, titre, g.libelle AS genre, r.prenom AS prenom, r.nom AS nom, f.id AS id, r.id AS r_id FROM film f
+SELECT YEAR(date_de_sortie) AS date, titre, r.naionalite AS nationnalite, r.prenom AS prenom, r.nom AS nom, f.id AS id FROM film f
 INNER JOIN genre g ON  f.id_genre = g.id
 INNER JOIN realisateur r ON f.id_réalisateur = r.id;
 ");
 $resultat->execute();
-$film = $resultat->fetchAll(PDO::FETCH_CLASS);
+$realisateur = $resultat->fetchAll(PDO::FETCH_CLASS);
 
-foreach ($film as $films) {
-    echo "<ul><li><a href='film.php?id_film=$films->id'>$films->titre</a> ($films->genre de <a href='filmmaker.php?id_film=$films->r_id'>$films->prenom $films->nom</a>, $films->date)</li></ul>";
+foreach ($realisateur as $realisateurs) {
+    echo "<h2> $realisateurs->prenom $realisateurs->nom : </h2>";
+
+    echo "<h4>Nationnalité : $realisateurs->nationnalite</h4>";
+    echo "<h4>Filmographie : <ul><li><a href='film.php?id_film=$realisateurs->id'>$realisateurs->titre</a>, $realisateurs->date</li></ul></h4>";
+
 }
 
 
-
 ?>
-
